@@ -78,7 +78,7 @@ heatline run --fixture examples/illustrative_heat_event.json \
              --channels console,jsonl --now 2026-06-13T06:00
 
 # 4. Ask a question (needs an AI key — see "AI backends")
-export ANTHROPIC_API_KEY=sk-...
+export OPENAI_API_KEY=sk-...
 heatline ask --location Kingston "I work construction. Is tomorrow safe?"
 ```
 
@@ -90,14 +90,22 @@ illustrative fixture to exercise the alert path on demand.
 
 Heatline **never requires** an LLM. With no key configured it uses static
 playbook templates grounded in public guidance, so delivery is never blocked by a
-missing key or a provider outage. To enable AI personalisation, set one of:
+missing key or a provider outage. To enable AI personalisation with GPT-6 Luna,
+set `OPENAI_API_KEY`:
 
 | Variable | Effect |
 |---|---|
-| `ANTHROPIC_API_KEY` | use Claude (default model `claude-sonnet-4-6`) |
-| `OPENAI_API_KEY` | use OpenAI (default model `gpt-4o-mini`) |
+| `OPENAI_API_KEY` | use OpenAI (default model `gpt-6-luna`) |
+| `ANTHROPIC_API_KEY` | optional legacy backend, only with `HEATLINE_LLM_PROVIDER=anthropic` |
 | `HEATLINE_LLM_PROVIDER` | force `anthropic`, `openai`, or `none` |
 | `HEATLINE_LLM_MODEL` | override the model id |
+
+The default is OpenAI with `reasoning_effort=none` for Luna and a bounded
+`max_completion_tokens` output budget. Anthropic is never selected automatically,
+even when its key is present. No OpenAI key means template-only operation unless
+a provider is explicitly selected. Clear any old `HEATLINE_LLM_PROVIDER` or
+`HEATLINE_LLM_MODEL` overrides to use the new default. See the
+[Luna API documentation](https://developers.openai.com/api/docs/models/gpt-6-luna).
 
 Then add `--llm` to `heatline run`. The model is constrained to the reviewed
 facts and is instructed never to invent medical content; any failure falls back

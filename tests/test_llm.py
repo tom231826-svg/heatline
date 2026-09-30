@@ -17,9 +17,9 @@ def test_active_provider_explicit_none(monkeypatch):
 
 def test_active_provider_autodetects_from_keys(monkeypatch):
     monkeypatch.delenv("HEATLINE_LLM_PROVIDER", raising=False)
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test")
-    assert llm.active_provider() == "anthropic"
+    assert llm.active_provider() == "openai"
 
 
 def test_active_provider_unknown_value_raises(monkeypatch):
